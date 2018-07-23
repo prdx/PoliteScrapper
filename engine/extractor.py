@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from url_canonicalizer import url_c14n
+from engine.url_canonicalizer import url_c14n
 
 def extract_text(html):
     soup = BeautifulSoup(html, "html.parser")

@@ -26,14 +26,14 @@ class Heap(object):
 
 
 class Link(object):
-    def __init__(self, url, inlinks):
+    def __init__(self, url):
             self.url = url
-            self.inlinks = -inlinks
+            self.inlinks = -1
             self.timestamp = time.time()
 
     # FIXME
-    def increase_inlinks(self, delta):
-            self.inlinks -= delta
+    def increase_inlinks(self):
+            self.inlinks -= 1
 
     def __lt__(self, other):
         if self.inlinks == other.inlinks:
