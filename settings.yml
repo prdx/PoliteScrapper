@@ -1,0 +1,6 @@
+crawl_limit: 22000
+download_dir: './download/'
+output_dir: './output/'
+stopwords: './AP_DATA/stoplist.txt'
+stemming: 'PorterStemmer'
+
