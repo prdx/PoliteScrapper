@@ -1,6 +1,8 @@
 import os
 import re
 import urllib
+import urlparse
+
 
 """
 Modified version of python-url-c14n
@@ -22,6 +24,17 @@ def url_c14n(s):
 
     # (Bagus) Remove the anchor
     anchor = ""
+
+    # (Bagus) If scheme not present
+    if scheme == '':
+        # If URL starts with // or / without http
+        if s.startswith("//"):
+            s = s[2:]
+        elif s.startswith("/"):
+            s = s[1:]
+        s = "http://" + s
+        scheme, netloc, path, qs, anchor = urlsplit(s)
+
 
     # converting the scheme and host to lower case.
     scheme = scheme.lower()
@@ -88,5 +101,4 @@ UNRESERVED = ALPHA + DIGIT + [0x2d, 0x2e, 0x5f, 0x7e]
 RE_UNRESERVED = re.compile('(?i)%({0})'.format(
     '|'.join(['{0:02X}'.format(x) for x in UNRESERVED])
 ))
-
 

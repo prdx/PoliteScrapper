@@ -25,7 +25,7 @@ class Heap(object):
         return len(self.heap)
 
 
-class queue_element(object):
+class Link(object):
     def __init__(self, url, inlinks):
             self.url = url
             self.inlinks = -inlinks
