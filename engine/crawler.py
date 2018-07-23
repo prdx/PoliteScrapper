@@ -10,6 +10,7 @@ def fetch(session, url, timeout = 1):
     """Fetch the head before downloding the page
     """
     try:
+        # Make a head request
         session.head(url)
         # Make sure it accepts text/html
         headers={"accept": "text/html"}
@@ -60,7 +61,7 @@ def crawl(LIMIT, seeds):
             continue
 
         text = extract_text(html)
-        links = extract_links(html)
+        links = extract_links(html, seed)
         
         for link in links:
             if link not in visited:

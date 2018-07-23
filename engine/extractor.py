@@ -12,7 +12,7 @@ def extract_text(html):
     text += " ".join([ x.text.strip() for x in soup.find_all("p")])
     return text
 
-def extract_links(html):
+def extract_links(html, base):
     soup =  BeautifulSoup(html, "html.parser")
-    return list(map(lambda x: url_c14n(x['href']), filter(lambda x: x.has_attr('href') and x.text != '', soup.find_all('a'))))
+    return list(map(lambda x: url_c14n(x['href'], base), filter(lambda x: x.has_attr('href') and x.text != '', soup.find_all('a'))))
 
