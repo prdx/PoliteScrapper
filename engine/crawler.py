@@ -1,4 +1,5 @@
 import requests
+import time
 from bs4 import BeautifulSoup
 from engine.data_structures import Heap, Link
 from engine.extractor import extract_links, extract_text
@@ -19,7 +20,6 @@ def fetch(session, url, timeout = 1):
         if res.status_code == 200:
             html = res.text
             header = res.headers
-            print(header)
 
             # Pattern:
             # Content-Type: text/html; charset=utf-8
@@ -52,32 +52,51 @@ def crawl(LIMIT, seeds):
     n_crawled = 0
     robot = {}
     queue = {}
-    visited = set()
+    outlink = {}
+    visited = []
+    start_time = 0.0
+    end_time = 0.0
+    last_netlock = ""
+    current_netlock = ""
 
     for seed in seeds:
         if not polite(robot, seed):
             continue
 
+        # One request / second for the same domain
+        delta_time = 1.0 - (end_time - start_time)
+        if len(visited) > 0:
+            last_netlock = urlparse(visited[-1])
+            last_netlock = '{uri.scheme}://{uri.netloc}/'.format(uri=last_netlock)
+            current_netlock = urlparse(seed)
+            current_netlock = '{uri.scheme}://{uri.netloc}/'.format(uri=current_netlock)
+        if delta_time > 0 and last_netlock == current_netlock:
+            print("Sleep for: {0}".format(delta_time))
+            time.sleep(delta_time)
+
+        start_time = time.time()
         header, html, _, ok = fetch(session, seed)
-        if not ok:
-            continue
+        if not ok: continue
+        end_time = time.time()
 
         text = extract_text(html)
         links = extract_links(html, seed)
+
+        # Remove outlink that contains action such as delete or edit
+        links = [ link for link in links if "edit" not in link and "delete" not in link ]
+
+        # Store the outlink in a dictionary
+        outlink[seed] = links
         
         for link in links:
             if link not in visited:
                 try:
-                    queue[link].increase_inlinks()
+                    queue[link].add_inlinks(link)
                 except KeyError:
                     new_link = Link(link)
                     queue[link] = new_link
                     heap.push(new_link)
         
         store(str(n_crawled), link, header, text, html, links)
-        visited.add(seed)
+        visited.append(seed)
         n_crawled += 1
-
-
-
-
