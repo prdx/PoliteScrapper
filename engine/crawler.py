@@ -11,13 +11,15 @@ def fetch(session, url, timeout = 1):
     """
     try:
         # Make a head request
-        session.head(url)
+        r = session.head(url)
         # Make sure it accepts text/html
         headers={"accept": "text/html"}
         res = session.get(url, headers=headers)
         # TODO: Use constants
         if res.status_code == 200:
             html = res.text
+            header = res.headers
+            print(header)
 
             # Pattern:
             # Content-Type: text/html; charset=utf-8
@@ -33,8 +35,8 @@ def fetch(session, url, timeout = 1):
 
             # Get only english
             if (soup.html.get("lang") == None or soup.html["lang"] == "en") and content_type == "text/html":
-                return (html, charset, True)
-            else: return ('', None, False)
+                return (header, html, charset, True)
+            else: return ('', '', None, False)
 
     except requests.exceptions.RequestException as e:
         print(e)
@@ -56,7 +58,7 @@ def crawl(LIMIT, seeds):
         if not polite(robot, seed):
             continue
 
-        html, charset, ok = fetch(session, seed)
+        header, html, _, ok = fetch(session, seed)
         if not ok:
             continue
 
@@ -72,7 +74,7 @@ def crawl(LIMIT, seeds):
                     queue[link] = new_link
                     heap.push(new_link)
         
-        store(str(n_crawled)+'.txt', charset, link, text, html, links)
+        store(str(n_crawled), link, header, text, html, links)
         visited.add(seed)
         n_crawled += 1
 
