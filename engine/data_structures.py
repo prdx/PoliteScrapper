@@ -26,10 +26,11 @@ class Heap(object):
 
 
 class Link(object):
-    def __init__(self, url):
+    def __init__(self, url, depth):
             self.url = url
             self.inlinks_count = -1
             self.inlinks = []
+            self.depth = depth
             self.timestamp = time.time()
 
     def add_inlinks(self, link):
