@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from engine.data_structures import Heap, Link
 from engine.extractor import extract_links, extract_text
 from engine.robot import polite
+from engine.topic_focus import is_oot_wikipedia, is_social_media, is_also_oot_wikipedia, is_wikimedia
 from engine.writer import store
 from urllib.parse import urlparse
 
@@ -60,6 +61,7 @@ def crawl(LIMIT, seeds):
     current_netlock = ""
 
     for seed in seeds:
+        # If not polite, skip
         if not polite(robot, seed): continue
 
         # One request / second for the same domain
@@ -69,6 +71,8 @@ def crawl(LIMIT, seeds):
             last_netlock = '{uri.scheme}://{uri.netloc}/'.format(uri=last_netlock)
             current_netlock = urlparse(seed)
             current_netlock = '{uri.scheme}://{uri.netloc}/'.format(uri=current_netlock)
+
+        # No need for delay if the previous one 
         if delta_time > 0 and last_netlock == current_netlock:
             print("Sleep for: {0}".format(delta_time))
             time.sleep(delta_time)
@@ -108,6 +112,14 @@ def crawl(LIMIT, seeds):
             next_link =  next_url.url
             depth = next_url.depth
             queue.pop(next_link)
+
+            # If contains facebook, twitter, or instagram skip
+            if is_social_media(next_link): continue
+
+            # If contains /wiki/Wikipedia:*, skip
+            if is_oot_wikipedia(next_link): continue
+            if is_wikimedia(next_link): continue
+            if is_also_oot_wikipedia(next_link): continue
 
             if not polite(robot, next_link): continue
 

@@ -8,7 +8,7 @@ download_dir = config.get("download_dir")
 def store(doc_id, depth, url, header, text, html, outlinks):
     with open(download_dir + doc_id + ".xml", 'wb') as xml:
         _doc_id_value.text = url
-        _depth_value.text = depth
+        _depth_value.text = str(depth)
         _text_value.text = text
         _header_value.text = str(header)
         _source_value.text = html
