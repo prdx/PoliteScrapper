@@ -6,14 +6,18 @@ download_dir = config.get("download_dir")
 
 
 def store(doc_id, depth, url, header, text, html, outlinks):
-    with open(download_dir + doc_id + ".xml", 'wb') as xml:
-        _doc_id_value.text = url
-        _depth_value.text = str(depth)
-        _text_value.text = text
-        _header_value.text = str(header)
-        _source_value.text = html
-        _outlinks_value.text = ','.join(outlinks)
-        xml.write(etree.tostring(_root, pretty_print=True))
+    try:
+        with open(download_dir + doc_id + ".xml", 'wb') as xml:
+            _doc_id_value.text = url
+            _depth_value.text = str(depth)
+            _text_value.text = text
+            _header_value.text = str(header)
+            _source_value.text = html
+            _outlinks_value.text = ','.join(outlinks)
+            xml.write(etree.tostring(_root, pretty_print=True))
+    except Exception as e:
+        print("Cannot write to file: {0}".format(url))
+        print(e.message)
 
 _root = etree.Element("items")
 _item = etree.SubElement(_root, "item")

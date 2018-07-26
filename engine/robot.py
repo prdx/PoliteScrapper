@@ -6,9 +6,12 @@ def polite(robot, url):
     try:
         rc = robot[host]
     except KeyError:
-        rc = urllib.robotparser.RobotFileParser()
-        rc.set_url("http://" + host + "/robots.txt")
-        rc.read()
-        robot[host] = rc
+        try:
+            rc = urllib.robotparser.RobotFileParser()
+            rc.set_url("http://" + host + "/robots.txt")
+            rc.read()
+            robot[host] = rc
+        except:
+            return True
     return rc.can_fetch("*", url)
 

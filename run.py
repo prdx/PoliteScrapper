@@ -15,12 +15,12 @@ def clean():
 
 def main():
     clean()
-    seeds = ["http://en.wikipedia.org/wiki/List_of_maritime_disasters",
+    seeds = ["http://www.telegraph.co.uk/news/worldnews/europe/italy/10312026/Costa-Concordia-recovery-timeline-of-cruise-ship-disaster.html",
+            "http://en.wikipedia.org/wiki/List_of_maritime_disasters",
             "http://en.wikipedia.org/wiki/Costa_Concordia_disaster",
-            "http://www.telegraph.co.uk/news/worldnews/europe/italy/10312026/Costa-Concordia-recovery-timeline-of-cruise-ship-disaster.html",
             "http://en.wikipedia.org/wiki/Costa_Concordia"]
     # TODO: Change to crawl limit
-    crawl(100, seeds)
+    crawl(2100, seeds)
 
 
 if __name__ == "__main__":

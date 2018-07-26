@@ -1,5 +1,6 @@
 import heapq
 import time
+from engine.topic_focus import keywords
 
 class Heap(object):
     """Max heap (Priority queue) implementation by inversing the value in min heap
@@ -26,10 +27,11 @@ class Heap(object):
 
 
 class Link(object):
-    def __init__(self, url, depth):
+    def __init__(self, url, depth, text):
             self.url = url
             self.inlinks_count = -1
             self.inlinks = []
+            self.text = text
             self.depth = depth
             self.timestamp = time.time()
 
@@ -38,7 +40,23 @@ class Link(object):
             self.inlinks_count -= 1
 
     def __lt__(self, other):
-        if self.inlinks == other.inlinks:
-            return self.timestamp < other.timestamp
-        return self.inlinks_count < other.inlinks_count
+        self_priority_count = self.priority_count(self.text)
+        other_priority_count = other.priority_count(other.text)
+
+        # Give higher priority for a link that has keyword in the anchor text
+        # Then if they are equal, we give higher priority if they have more inkilings
+        if self_priority_count == other_priority_count:
+            if self.inlinks_count == other.inlinks_count:
+                return self.timestamp < other.timestamp
+            return self.inlinks_count < other.inlinks_count
+        return self_priority_count < other_priority_count 
+
+    def priority_count(self, text):
+        n = 0
+        for keyword in keywords:
+            if keyword in text.lower():
+                n += 1
+        return -1 * n
+
+
 
