@@ -20,7 +20,7 @@ def main():
             "http://en.wikipedia.org/wiki/Costa_Concordia_disaster",
             "http://en.wikipedia.org/wiki/Costa_Concordia"]
     # TODO: Change to crawl limit
-    crawl(2100, seeds)
+    crawl(21000, seeds)
 
 
 if __name__ == "__main__":

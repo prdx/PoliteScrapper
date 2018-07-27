@@ -5,20 +5,20 @@ from engine.data_structures import Heap, Link
 from engine.extractor import extract_links, extract_text
 from engine.robot import polite
 from engine.topic_focus import is_edit_or_delete, is_oot_wikipedia, is_oot_telegraph, is_social_media, is_also_oot_wikipedia, is_wikimedia
-from engine.writer import store
+from engine.writer import store, to_pickle
 from urllib.parse import urlparse
 
 def fetch(session, url, timeout = 1):
     """Fetch the head before downloding the page
     """
-    if "telegraph.co.uk" in url:
-        print(url)
+    # if "wikipedia" in url:
+        # print(url)
     try:
         # Make a head request
         r = session.head(url)
         # Make sure it accepts text/html
         headers={"accept": "text/html"}
-        res = session.get(url, headers=headers, timeout=1)
+        res = session.get(url, headers=headers, timeout=2)
         # TODO: Use constants
         if res.status_code == 200:
             html = res.text
@@ -43,8 +43,9 @@ def fetch(session, url, timeout = 1):
     except requests.exceptions.RequestException as e:
         if timeout > 0:
             return fetch(session, url, timeout - 1)
-    except:
-        print(url)
+    except Exception as e:
+        print("Fail:" + url)
+        print(e.message)
     return ('', '', None, False)
 
 def should_skip(url):
@@ -53,7 +54,6 @@ def should_skip(url):
 
         # If contains /wiki/Wikipedia:*, skip
         if is_oot_wikipedia(url): 
-            print(url)
             return True
         if is_wikimedia(url): return True
         if is_also_oot_wikipedia(url): return True
@@ -80,6 +80,9 @@ def crawl(LIMIT, seeds):
     end_time = 0.0
     last_netlock = ""
     current_netlock = ""
+
+    start_running_time = time.time()
+    current_time = start_time
 
     for seed in seeds:
         # If not polite, skip
@@ -147,7 +150,7 @@ def crawl(LIMIT, seeds):
                 current_netlock = urlparse(next_link)
                 current_netlock = '{uri.scheme}://{uri.netloc}/'.format(uri=current_netlock)
             if 0 < delta_time < 1 and last_netlock == current_netlock:
-                print("Sleep for: {0}".format(delta_time))
+                # print("Sleep for: {0}".format(delta_time))
                 time.sleep(delta_time)
 
             start_time = time.time()
@@ -175,8 +178,21 @@ def crawl(LIMIT, seeds):
             n_crawled += 1
             heap.heapify()
 
+            if n_crawled % 100 == 0:
+                print("100 crawled pages for: " + str(int(time.time() - current_time)) + ' seconds')
+                print("Frontier heap size: " + str(heap.size()))
+                print("Total page crawled: " + str(n_crawled))
+                current_time = time.time()
+                print(hours_minutes(int(current_time - start_running_time)))
+
             end_time = time.time()
 
-        except Exception:
-            print("ERROR: Could not connect to page (generic)" + next_link)
+        except Exception as e:
+            print("Fail" + next_link)
+            print(e.message)
             continue
+    # Write outlink
+    to_pickle("outlinks.p", outlink)
+
+def hours_minutes(seconds):
+    return str(seconds/3600) + ' hours, ' + str((seconds%3600)/60) + ' mins elapsed.'

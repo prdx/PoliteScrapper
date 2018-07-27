@@ -5,10 +5,10 @@ keywords = [
         "concordia",
         "maritime",
         "accident",
-        "wreck",
-        " ship", # To avoid %ship
-        " sank ",
-        " survivor"
+        "wreck"
+        # " ship", # To avoid %ship
+        # " sank ",
+        # " survivor"
         ]
 
 oot_wikipedia_path_list = [
@@ -17,7 +17,6 @@ oot_wikipedia_path_list = [
         "/wiki/Wikipedia",
         "/wiki/Special",
         "/wiki/Main_Page"
-        "/wiki/Category"
         ]
 
 oot_telegraph_path_list = [
@@ -33,7 +32,6 @@ oot_telegraph_path_list = [
         "/film",
         "/technology",
         "/fashion",
-        "/finance",
         "/motoring",
         "/cars",
         "/luxury",
@@ -43,7 +41,14 @@ oot_telegraph_path_list = [
         "/telegraphtv",
         "/football",
         "/culture",
-        "/education"
+        "/environment",
+        "/business",
+        "/stage",
+        "/tv-and-radio",
+        "/education",
+        "/journalists",
+        "/profile",
+        "/financialservices/"
         ]
 
 oot_telegraph_subdomains = [
@@ -61,34 +66,38 @@ oot_telegraph_subdomains = [
         "coffeevsgangs.telegraph.co.uk",
         "bit.ly",
         "coffeevsgangs.com",
-        "coffeemadehappy.com"
+        "coffeemadehappy.com",
         "fantasycricket.telegraph.co.uk",
-        "fantasyfootballscout.co.uk"
+        "fantasyfootballscout.co.uk",
+        "workforus.theguardian.com"
         ]
 
 
 oot_wikipedia_extra_path_pattern_list = "/w/"
 
-social_media = ["facebook", "twitter", "instagram"]
+social_media = ["facebook", "twitter", "instagram", "google", "youtube"]
 
 def is_oot_wikipedia(url):
     r = urlparse(url)
-    for l in oot_wikipedia_path_list:
-        if r.path.startswith(l):
+    for oot in oot_wikipedia_path_list:
+        if r.path.startswith(oot):
             return True
     return False
 
 def is_social_media(url):
     r = urlparse(url)
-    for oot in oot_telegraph_subdomains:
-        if oot in r.netloc:
+    for socmed in social_media:
+        if socmed in r.netloc:
             return True
     return False
 
 def is_oot_telegraph(url):
     r = urlparse(url)
-    for socmed in social_media:
-        if socmed in r.netloc:
+    for oot in oot_telegraph_subdomains:
+        if oot in r.netloc:
+            return True
+    for oot in oot_telegraph_path_list:
+        if r.path.startswith(oot):
             return True
     return False
 
