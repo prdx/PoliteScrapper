@@ -1,6 +1,7 @@
-from engine.crawler import crawl
+from engine.crawler_from_save import crawl
 from tools.config import Config
 import os
+import pickle
 
 config = Config("./settings.yml")
 crawl_limit = config.get("crawl_limit")
@@ -21,7 +22,15 @@ def main():
             "http://en.wikipedia.org/wiki/Costa_Concordia_disaster",
             "http://en.wikipedia.org/wiki/Costa_Concordia"]
     # TODO: Change to crawl limit
-    crawl(21000, seeds)
+    with open("./output-2/heap-7300.p", "rb") as h:
+        heap = pickle.load(h)
+    with open("./output-2/outlink-7300.p", "rb") as o:
+        outlink = pickle.load(o)
+    with open("./output-2/queue-7300.p", "rb") as q:
+        queue = pickle.load(q)
+    with open("./output-2/visited-7300.p", "rb") as v:
+        visited = pickle.load(v)
+    crawl(21000, seeds, heap, visited, outlink, queue)
 
 
 if __name__ == "__main__":
