@@ -69,13 +69,10 @@ def should_skip(url):
         return False
 
 
-def crawl(LIMIT, seeds):
-    heap = Heap()
+def crawl(LIMIT, seeds, heap, visited, outlink, queue):
     session = requests.Session()
     n_crawled = 0
     robot = {}
-    queue = {}
-    outlink = {}
     visited = []
     start_time = 0.0
     end_time = 0.0
@@ -84,50 +81,6 @@ def crawl(LIMIT, seeds):
 
     start_running_time = time.time()
     current_time = start_time
-
-    for seed in seeds:
-        # If not polite, skip
-        if not polite(robot, seed): continue
-
-        # One request / second for the same domain
-        delta_time = 1.0 - (end_time - start_time)
-        if len(visited) > 0:
-            last_netlock = urlparse(visited[-1])
-            last_netlock = '{uri.scheme}://{uri.netloc}/'.format(uri=last_netlock)
-            current_netlock = urlparse(seed)
-            current_netlock = '{uri.scheme}://{uri.netloc}/'.format(uri=current_netlock)
-
-        # No need for delay if the previous one 
-        if delta_time > 0 and last_netlock == current_netlock:
-            print("Sleep for: {0}".format(delta_time))
-            time.sleep(delta_time)
-
-        start_time = time.time()
-
-        header, html, _, ok = fetch(session, seed)
-        if not ok: continue
-
-        end_time = time.time()
-
-        text = extract_text(html)
-
-        links_and_text = extract_links(html, seed)
-        links_and_text = dict(links_and_text)
-
-        for link in links_and_text:
-            if link not in visited:
-                try:
-                    queue[link].add_inlinks()
-                except KeyError:
-                    new_link = Link(link, 1, "")
-                    queue[link] = new_link
-                    heap.push(new_link)
-                # Store the outlink in a dictionary
-                outlink[seed] = list(links_and_text.keys())
-        
-        store(str(n_crawled), 0, seed, header, text, html, links_and_text.keys())
-        visited.append(seed)
-        n_crawled += 1
 
     while n_crawled < LIMIT:
         """

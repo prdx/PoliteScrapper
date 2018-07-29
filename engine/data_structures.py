@@ -30,13 +30,11 @@ class Link(object):
     def __init__(self, url, depth, text):
             self.url = url
             self.inlinks_count = -1
-            self.inlinks = []
             self.text = text
             self.depth = depth
             self.timestamp = time.time()
 
-    def add_inlinks(self, link):
-            self.inlinks.append(link)
+    def add_inlinks(self):
             self.inlinks_count -= 1
 
     def __lt__(self, other):
@@ -49,7 +47,7 @@ class Link(object):
             if self.inlinks_count == other.inlinks_count:
                 return self.timestamp < other.timestamp
             return self.inlinks_count < other.inlinks_count
-        return self_priority_count < other_priority_count 
+        return self_priority_count < other_priority_count
 
     def priority_count(self, text):
         n = 0

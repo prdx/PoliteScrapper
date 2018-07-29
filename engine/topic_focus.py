@@ -3,12 +3,12 @@ from urllib.parse import urlparse
 keywords = [
         "costa",
         "concordia",
+        "costa concordia",
+        "francesco schettino",
         "maritime",
         "accident",
-        "wreck"
-        # " ship", # To avoid %ship
-        # " sank ",
-        # " survivor"
+        "wreck",
+        " ship" # To avoid %ship
         ]
 
 oot_wikipedia_path_list = [

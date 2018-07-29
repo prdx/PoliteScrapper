@@ -1,6 +1,7 @@
 from tools.config import Config
 from lxml import etree
 import pickle
+import uuid
 
 config = Config("./settings.yml")
 download_dir = config.get("download_dir")
@@ -9,7 +10,7 @@ output_dir = config.get("output_dir")
 
 def store(doc_id, depth, url, header, text, html, outlinks):
     try:
-        with open(download_dir + doc_id + ".xml", 'wb') as xml:
+        with open(download_dir + str(uuid.uuid4().hex) + ".xml", 'wb') as xml:
             _doc_id_value.text = url
             _depth_value.text = str(depth)
             _text_value.text = text
@@ -19,7 +20,7 @@ def store(doc_id, depth, url, header, text, html, outlinks):
             xml.write(etree.tostring(_root, pretty_print=True))
     except Exception as e:
         print("Cannot write to file: {0}".format(url))
-        print(e.message)
+        print(e)
 
 def to_pickle(filename, data):
     try:
@@ -27,7 +28,7 @@ def to_pickle(filename, data):
             pickle.dump(data, f)
     except Exception as e:
         print("Cannot write pickle: {0}".format(filename))
-        print(e.message)
+        print(e)
         
 
 _root = etree.Element("items")
