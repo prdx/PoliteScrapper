@@ -1,6 +1,8 @@
 crawl_limit: 22000
-download_dir: './download/'
+download_dir: './download-4/'
 output_dir: './output/'
 stopwords: './AP_DATA/stoplist.txt'
 stemming: 'PorterStemmer'
+index_name: 'merged'
+es_dir: './es/'
 

@@ -1,0 +1,60 @@
+{
+  "settings": {
+    "index": {
+      "store": {
+        "type": "default"
+      },
+      "number_of_shards": 3,
+      "number_of_replicas": 0
+    }
+  },
+  "mappings": {
+    "document": { 
+      "properties": { 
+        "docno": { 
+          "type": "text", 
+          "store": true, 
+          "term_vector": "with_positions_offsets_payloads" 
+        }, 
+        "HTTPheader": { 
+          "type": "keyword", 
+          "store": true 
+        }, 
+        "title":{ 
+          "type": "text", 
+          "store": true,  
+          "term_vector": "with_positions_offsets_payloads"
+        }, 
+        "text": { 
+          "type": "text", 
+          "store": true,  
+          "term_vector": "with_positions_offsets_payloads"
+        },       
+        "html_Source": { 
+          "type":"text", 
+          "store": true
+        }, 
+        "in_links":{ 
+          "type": "keyword", 
+          "store": true
+        }, 
+        "out_links":{ 
+          "type": "keyword", 
+          "store": true 
+        }, 
+        "author":{ 
+          "type": "text", 
+          "store": true 
+        },
+        "depth": { 
+          "type": "integer", 
+          "store": true 
+        },
+        "url": { 
+          "type": "keyword", 
+          "store": true 
+        }
+      } 
+    } 
+  }
+}
