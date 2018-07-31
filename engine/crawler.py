@@ -82,8 +82,6 @@ def crawl(LIMIT, seeds):
     last_netlock = ""
     current_netlock = ""
 
-    start_running_time = time.time()
-    current_time = start_time
 
     for seed in seeds:
         # If not polite, skip
@@ -122,8 +120,6 @@ def crawl(LIMIT, seeds):
                     new_link = Link(link, 1, "")
                     queue[link] = new_link
                     heap.push(new_link)
-                # Store the outlink in a dictionary
-                outlink[seed] = list(links_and_text.keys())
         
         store(str(n_crawled), 0, seed, header, text, html, links_and_text.keys())
         visited.append(seed)
@@ -171,23 +167,17 @@ def crawl(LIMIT, seeds):
                         new_link = Link(link, depth + 1, links_and_text[link])
                         queue[link] = new_link
                         heap.push(new_link)
-                    # Store the outlink in a dictionary
-                    outlink[next_link] = list(links_and_text.keys())
             
             store(str(n_crawled), depth, next_link, header, text, html, links_and_text.keys())
             visited.append(next_link)
             heap.heapify()
 
             if n_crawled % 100 == 0:
-                print("100 crawled pages for: " + str(int(time.time() - current_time)) + ' seconds')
-                print("Frontier heap size: " + str(heap.size()))
-                to_pickle("outlink-" + str(n_crawled) + ".p", outlink)
+                print("Saving ...")
                 to_pickle("heap-" + str(n_crawled) + ".p", heap)
                 to_pickle("queue-" + str(n_crawled) + ".p", queue)
                 to_pickle("visited-" + str(n_crawled) + ".p", visited)
                 print("Total page crawled: " + str(n_crawled))
-                current_time = time.time()
-                print(hours_minutes(int(current_time - start_running_time)))
 
             n_crawled += 1
             end_time = time.time()
@@ -196,8 +186,4 @@ def crawl(LIMIT, seeds):
             print("Fail" + next_link)
             print(e)
             continue
-    # Write outlink
-    to_pickle("outlinks.p", outlink)
 
-def hours_minutes(seconds):
-    return str(seconds/3600) + ' hours, ' + str((seconds%3600)/60) + ' mins elapsed.'
