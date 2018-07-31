@@ -5,6 +5,7 @@ import json
 config = Config("./settings.yml")
 index_name = config.get("index_name")
 es_dir = config.get("es_dir")
+# es = Elasticsearch(hosts = ["52.21.27.105"])
 es = Elasticsearch()
 
 def create_index():
@@ -29,9 +30,9 @@ def get_es_script(script_name):
 def store_document(doc_id, url, header, title, text, html, outlinks, inlinks, depth, author="Bagus"):
     es.index(index = index_name,
             doc_type = "document",
-            id = doc_id,
+            id = url,
             body = {
-                "docno": url,
+                "docno": doc_id,
                 "url": url,
                 "depth": depth,
                 "author": author,
@@ -60,3 +61,8 @@ def search(keywords = "", body = {}):
             body = body
         )
     return res
+
+def get(url):
+    res = es.get(index = index_name, doc_type = "document", id = url)
+    return res
+

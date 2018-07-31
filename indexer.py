@@ -20,7 +20,7 @@ with open("./output/inlinks.p", "rb") as out:
 if es.ping():
     
     # Go through all of the corpus and store it
-    id_count = 20001
+    id_count = 1
     
     for f in os.listdir(download_dir):
         if f.endswith(".xml"):
@@ -47,9 +47,9 @@ if es.ping():
                     title = soup_for_title.title.text
                     print(url)
 
-                    res = search(url)
                     try:
-                        hits = res["hits"]["hits"]
+                        res = get(url)
+                        hits = res["_source"]
                         index = 0
                         # for hit in hits:
                             # if hit["_source"]["url"] == url:
@@ -57,16 +57,16 @@ if es.ping():
                             # index += 1
 
                         # Get everything
-                        _outlinks_remote = res["hits"]["hits"][index]["_source"]["out_links"]
-                        _inlinks_remote = res["hits"]["hits"][index]["_source"]["in_links"]
-                        _doc_id = res["hits"]["hits"][index]["_id"]
-                        _url = res["hits"]["hits"][index]["_source"]["url"]
-                        _depth = res["hits"]["hits"][index]["_source"]["depth"]
-                        _author = res["hits"]["hits"][index]["_source"]["author"]
-                        _text = res["hits"]["hits"][index]["_source"]["text"]
-                        _title = res["hits"]["hits"][index]["_source"]["title"]
-                        _html = res["hits"]["hits"][index]["_source"]["html_Source"]
-                        _header = res["hits"]["hits"][index]["_source"]["HTTPheader"]
+                        _outlinks_remote = hits["out_links"]
+                        _inlinks_remote = hits["in_links"]
+                        _doc_id = hits["docno"] 
+                        _url = hits["url"]
+                        _depth = hits["depth"]
+                        _author = hits["author"]
+                        _text = hits["text"]
+                        _title = hits["title"]
+                        _html = hits["html_Source"]
+                        _header = hits["HTTPheader"]
 
                         # Merge the in - out links
                         out_links += _outlinks_remote
@@ -82,11 +82,15 @@ if es.ping():
                         print("URL exists: " + _url)
 
                         store_document(_doc_id, _url, _header, _title, _text, _html, out_links, in_links, _depth)
-
+                        os.rename(download_dir + f, download_dir + f + ".done")
                     except KeyError:
+                        print("Key not found")
                         store_document(id_count, url, header, title, text, html, out_links, in_links, depth)
-                    except Exception:
+                        os.rename(download_dir + f, download_dir + f + ".done")
+                    except:
+                        print("New document")
                         store_document(id_count, url, header, title, text, html, out_links, in_links, depth)
+                        os.rename(download_dir + f, download_dir + f + ".done")
                 id_count += 1
             except Exception as e:
                 print("Fail for: {0}".format(f))
