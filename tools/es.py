@@ -5,8 +5,8 @@ import json
 config = Config("./settings.yml")
 index_name = config.get("index_name")
 es_dir = config.get("es_dir")
-# es = Elasticsearch(hosts = ["52.21.27.105"])
-es = Elasticsearch()
+es = Elasticsearch(hosts = ["52.21.27.105"])
+# es = Elasticsearch()
 
 def create_index():
     """Create new index

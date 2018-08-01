@@ -8,6 +8,17 @@ from engine.topic_focus import is_edit_or_delete, is_oot_wikipedia, is_oot_teleg
 from engine.writer import store, to_pickle
 from urllib.parse import urlparse
 
+heap = Heap()
+session = requests.Session()
+n_crawled = 0
+robot = {}
+queue = {}
+visited = []
+start_time = 0.0
+end_time = 0.0
+last_netlock = ""
+current_netlock = ""
+
 def fetch(session, url, timeout = 1):
     """Fetch the head before downloding the page
     """
@@ -68,20 +79,17 @@ def should_skip(url):
 
         return False
 
-
-def crawl(LIMIT, seeds):
-    heap = Heap()
-    session = requests.Session()
-    n_crawled = 0
-    robot = {}
-    queue = {}
-    outlink = {}
-    visited = []
-    start_time = 0.0
-    end_time = 0.0
-    last_netlock = ""
-    current_netlock = ""
-
+def crawl_seeds(seeds):
+    global heap
+    global session
+    global n_crawled
+    global robot
+    global queue
+    global visited
+    global start_time
+    global end_time
+    global last_netlock
+    global current_netlock
 
     for seed in seeds:
         # If not polite, skip
@@ -124,6 +132,21 @@ def crawl(LIMIT, seeds):
         store(str(n_crawled), 0, seed, header, text, html, links_and_text.keys())
         visited.append(seed)
         n_crawled += 1
+
+def crawl(LIMIT, seeds):
+    
+    global heap
+    global session
+    global n_crawled
+    global robot
+    global queue
+    global visited
+    global start_time
+    global end_time
+    global last_netlock
+    global current_netlock
+
+    crawl_seeds(seeds)
 
     while n_crawled < LIMIT:
         """
